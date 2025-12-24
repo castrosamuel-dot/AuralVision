@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { sendPasswordResetEmail } from 'firebase/auth';
+import { FirebaseError } from 'firebase/app';
 import { auth } from '@/lib/firebase';
 import Link from 'next/link';
 import { ArrowLeft, Mail, CheckCircle } from 'lucide-react';
@@ -19,18 +20,28 @@ export default function ForgotPasswordPage() {
       await sendPasswordResetEmail(auth, email);
       setStatus('success');
     } catch (error) {
+      console.error('Password reset error:', error);
       setStatus('error');
-      if (error instanceof Error) {
-        // Parse Firebase error messages
-        if (error.message.includes('user-not-found')) {
-          setErrorMessage('No account found with this email address.');
-        } else if (error.message.includes('invalid-email')) {
-          setErrorMessage('Please enter a valid email address.');
-        } else if (error.message.includes('too-many-requests')) {
-          setErrorMessage('Too many requests. Please try again later.');
-        } else {
-          setErrorMessage('Failed to send reset email. Please try again.');
+      
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case 'auth/user-not-found':
+            setErrorMessage('No account found with this email address.');
+            break;
+          case 'auth/invalid-email':
+            setErrorMessage('Please enter a valid email address.');
+            break;
+          case 'auth/too-many-requests':
+            setErrorMessage('Too many requests. Please try again later.');
+            break;
+          case 'auth/missing-email':
+            setErrorMessage('Please provide an email address.');
+            break;
+          default:
+            setErrorMessage(`Failed to send reset email: ${error.message}`);
         }
+      } else if (error instanceof Error) {
+        setErrorMessage(error.message);
       } else {
         setErrorMessage('An unexpected error occurred.');
       }
