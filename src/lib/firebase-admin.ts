@@ -25,7 +25,7 @@ function getFirebaseAdminApp(): App {
 
   // Fallback: Initialize with project ID only (works in Google Cloud environments)
   return initializeApp({
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "mock-project-id",
   });
 }
 
