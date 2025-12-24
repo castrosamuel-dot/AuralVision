@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Firebase secrets
+aural-vision-firebase-adminsdk-fbsvc-*.json
+
+# Tool state
+.claude/
