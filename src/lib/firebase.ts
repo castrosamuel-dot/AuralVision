@@ -4,13 +4,15 @@ import { getFirestore } from "firebase/firestore";
 import { getAI, VertexAIBackend } from "firebase/ai";
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 
+const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
+
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "mock-api-key",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "mock-auth-domain",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "mock-project-id",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "mock-storage-bucket",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "mock-sender-id",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "mock-app-id",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || (isBuildTime ? "mock-api-key" : undefined),
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || (isBuildTime ? "mock-auth-domain" : undefined),
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || (isBuildTime ? "mock-project-id" : undefined),
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || (isBuildTime ? "mock-storage-bucket" : undefined),
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || (isBuildTime ? "mock-sender-id" : undefined),
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || (isBuildTime ? "mock-app-id" : undefined),
 };
 
 // Initialize Firebase

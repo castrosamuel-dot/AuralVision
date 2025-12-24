@@ -24,8 +24,9 @@ function getFirebaseAdminApp(): App {
   }
 
   // Fallback: Initialize with project ID only (works in Google Cloud environments)
+  const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
   return initializeApp({
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "mock-project-id",
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || (isBuildTime ? "mock-project-id" : undefined),
   });
 }
 
