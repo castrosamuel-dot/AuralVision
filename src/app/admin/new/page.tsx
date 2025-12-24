@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { addDoc, collection } from 'firebase/firestore';
 import { db, vertexAI } from '@/lib/firebase';
-import { getGenerativeModel } from "firebase/vertexai";
+import { getGenerativeModel } from "firebase/ai";
 import { ArrowLeft, Sparkles, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
