@@ -10,3 +10,6 @@ export interface Post {
   published: boolean;
   coverImage?: string;
 }
+
+// Admin roles stored in Firebase Auth custom claims
+export type AdminRole = 'admin' | 'super_admin';

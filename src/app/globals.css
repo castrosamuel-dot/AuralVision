@@ -2,19 +2,71 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-background: #ffffff;
-  --color-foreground: #171717;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-border: var(--border);
+  
+  /* Custom radius for bubbly effect */
+  --radius-bubble: 1.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  /* Light Mode - Bubbly & Colorful */
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: #3b82f6; /* Blue-500 */
+  --secondary: #8b5cf6; /* Purple-500 */
+  --border: #e5e7eb;
+  --radius: 1rem; /* Bubbly rounded corners */
+  --font-body: ui-sans-serif, system-ui, sans-serif;
+}
+
+[data-theme="dark"] {
+  /* Dark Mode - Green Terminal */
+  --background: #000000;
+  --foreground: #00ff41; /* Matrix Green */
+  --primary: #00ff41;
+  --secondary: #008f11;
+  --border: #003b00;
+  --radius: 0px; /* Sharp corners for terminal */
+  --font-body: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Terminal Scanline Effect for Dark Mode */
+[data-theme="dark"] body::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 9999;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+/* Global utility overrides for theme adaptation */
+[data-theme="dark"] .rounded-lg,
+[data-theme="dark"] .rounded-md,
+[data-theme="dark"] .rounded-xl, 
+[data-theme="dark"] .rounded-full {
+  border-radius: 0 !important;
+}
+
+[data-theme="dark"] .shadow-sm,
+[data-theme="dark"] .shadow-md,
+[data-theme="dark"] .shadow-lg {
+  box-shadow: none !important;
+  border: 1px solid var(--primary);
 }

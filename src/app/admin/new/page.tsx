@@ -71,7 +71,7 @@ export default function NewPostPage() {
 
         setContent(generatedText);
       }
-    } catch (e: any) {
+    } catch (e) {
       console.error("Generation Error:", e);
       alert('Failed to generate content. Ensure Vertex AI API is enabled in Firebase Console.');
     } finally {
