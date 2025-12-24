@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { addDoc, collection } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, vertexAI } from '@/lib/firebase';
+import { getGenerativeModel } from "firebase/vertexai";
 import { ArrowLeft, Sparkles, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -29,17 +30,31 @@ export default function NewPostPage() {
     if (!topic) return alert('Please enter a topic');
     setIsGenerating(true);
     try {
-      const res = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic, category, tone }),
-      });
-      const data = await res.json();
+      const model = getGenerativeModel(vertexAI, { model: "gemini-1.5-flash" });
+
+      const prompt = `
+      You are an expert Audio Visual technician, technology reviewer, and blogger for a site called "AuralVision".
       
-      if (data.content) {
-        // Simple parsing to extract Title and Excerpt if possible
-        let generatedText = data.content;
-        
+      Write a comprehensive, engaging, and professional blog post about: "${topic}".
+      Category: ${category}
+      Tone: ${tone}
+
+      Structure the response in Markdown format.
+      Include:
+      1. A catchy Title (h1).
+      2. An engaging Introduction.
+      3. Well-structured body paragraphs with subheadings (h2, h3).
+      4. A Conclusion.
+      5. A short "Excerpt" at the very end, labeled as "EXCERPT:".
+
+      Do not include any preamble like "Here is the blog post". Just output the content.
+      `;
+
+      const result = await model.generateContent(prompt);
+      const response = result.response;
+      let generatedText = response.text();
+
+      if (generatedText) {
         // Try to extract title (# Title)
         const titleMatch = generatedText.match(/^#\s+(.+)$/m);
         if (titleMatch) {
@@ -56,8 +71,9 @@ export default function NewPostPage() {
 
         setContent(generatedText);
       }
-    } catch (e) {
-      alert('Failed to generate content');
+    } catch (e: any) {
+      console.error("Generation Error:", e);
+      alert('Failed to generate content. Ensure Vertex AI API is enabled in Firebase Console.');
     } finally {
       setIsGenerating(false);
     }
@@ -77,7 +93,7 @@ export default function NewPostPage() {
         author: user?.email || 'Admin',
         createdAt: Date.now(),
         published,
-        coverImage: null // Could add image upload later
+        coverImage: null
       });
       router.push('/admin');
     } catch (e) {
@@ -101,7 +117,7 @@ export default function NewPostPage() {
         <div className="lg:col-span-1 space-y-6">
           <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
             <h2 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-              <Sparkles className="h-5 w-5 text-purple-500 mr-2" /> AI Writer
+              <Sparkles className="h-5 w-5 text-purple-500 mr-2" /> AI Writer (Vertex AI)
             </h2>
             
             <div className="space-y-4">
