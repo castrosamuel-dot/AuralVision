@@ -17,6 +17,11 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
+if (typeof window !== 'undefined' && firebaseConfig.apiKey === 'mock-api-key') {
+  console.warn("Firebase initialized with MOCK API key. Ensure NEXT_PUBLIC_FIREBASE_API_KEY is set in your deployment environment variables.");
+}
+
 const auth = getAuth(app);
 const db = getFirestore(app);
 const vertexAI = getAI(app, { backend: new VertexAIBackend() });
